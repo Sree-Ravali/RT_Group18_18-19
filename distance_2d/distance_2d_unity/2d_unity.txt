@@ -1,0 +1,75 @@
+using UnityEngine;
+using System.Collections;
+using System.IO.Ports;
+public class axis : MonoBehaviour
+{
+
+    private Vector3 temp;
+
+    private SerialPort stream = new SerialPort(@"\\.\" + "COM8", 9600);
+
+  
+    // Use this for initialization
+    void Start()
+    {
+        stream.Open();
+        stream.ReadTimeout = 25;
+        StartCoroutine(readString());
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+    IEnumerator readString()
+    {
+       
+        while (true)
+        {
+            Debug.Log("com9");
+            Debug.Log(stream.IsOpen);
+            if (stream.IsOpen)
+            {
+                
+
+                try
+                {
+                    
+                    string value = stream.ReadLine();
+                    
+                    string[] values = value.Split(',');
+
+                    float x = int.Parse(values[0]);
+
+                    //float y = int.Parse(value);
+                    Debug.Log(x);
+                    float y = -1 * (int.Parse(values[1]));
+                    Debug.Log(y);
+
+
+
+                    x = x / 10f;
+                    y = y / 10f;
+                    Debug.Log(x);
+                    Debug.Log(y);
+                    temp = transform.position;
+                    Debug.Log(temp);
+                    temp.x = y;
+                    temp.y = x;
+                    transform.position = temp;
+
+                }
+                catch (System.Exception)
+                {
+
+                }
+
+            }
+
+            yield return null;
+
+        }
+
+    }
+}
